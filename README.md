@@ -66,10 +66,6 @@ npm run storybook
 - **html2canvas**: HTML-to-image conversion
 - **jspdf**: PDF generation
 
-## License
-
-MIT License
-
 ## Contributing
 
 We welcome contributions! Please submit pull requests or report issues through our GitHub repository.
