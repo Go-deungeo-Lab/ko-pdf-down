@@ -9,10 +9,10 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",  // "bundler"에서 "node"로 변경
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react",             // "preserve"에서 "react"로 변경
+    "jsx": "react",
     "incremental": true,
     "baseUrl": ".",
     "paths": {
@@ -20,11 +20,14 @@
     }
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "stories/**/*.ts",
-    "stories/**/*.tsx",
-    ".storybook/**/*"
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
+    "./stories/**/*.ts",
+    "./stories/**/*.tsx",
+    "./stories/**/*.stories.ts",
+    "./stories/**/*.stories.tsx",
+    "./.storybook/**/*",
+    "./src/fonts/**/*"
   ],
   "exclude": ["node_modules", "dist"]
 }
