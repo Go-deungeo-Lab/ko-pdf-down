@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import {generatePdf, PdfGeneratorOptions} from "@/utils/pdfGenerator";
 
 interface PdfDownloadButtonProps {
     /** 버튼에 표시될 텍스트 */
@@ -7,6 +8,8 @@ interface PdfDownloadButtonProps {
     fileName?: string;
     /** PDF에 들어갈 내용 */
     content: string;
+    /** PDF 스타일 옵션 */
+    style?: PdfGeneratorOptions['style'];
     /** 버튼 스타일 변형 */
     variant?: 'primary' | 'secondary' | 'outline' | 'gradient';
     /** 버튼 크기 */
@@ -17,21 +20,31 @@ interface PdfDownloadButtonProps {
     disabled?: boolean;
     /** 커스텀 클래스 */
     className?: string;
+    /** 다운로드 시작 시 콜백 */
+    onDownloadStart?: () => void;
     /** 다운로드 완료 후 콜백 */
     onDownloadComplete?: () => void;
+    /** 에러 발생 시 콜백 */
+    onError?: (error: Error) => void;
 }
 
 const PdfDownloadButton: React.FC<PdfDownloadButtonProps> = ({
                                                                  text = 'PDF 다운로드',
                                                                  fileName = 'document.pdf',
                                                                  content,
+                                                                 style = {},
                                                                  variant = 'primary',
                                                                  size = 'md',
-                                                                 isLoading = false,
+                                                                 isLoading: externalLoading,
                                                                  disabled = false,
                                                                  className = '',
-                                                                 onDownloadComplete
+                                                                 onDownloadStart,
+                                                                 onDownloadComplete,
+                                                                 onError
                                                              }) => {
+    const [internalLoading, setInternalLoading] = useState(false);
+    const isLoading = externalLoading || internalLoading;
+
     const baseStyles = 'inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-95 shadow-sm';
 
     const variantStyles = {
@@ -50,10 +63,22 @@ const PdfDownloadButton: React.FC<PdfDownloadButtonProps> = ({
     const handleClick = async () => {
         if (isLoading || disabled) return;
 
-        // TODO: PDF 생성 및 다운로드 로직 구현
-        console.log('PDF 다운로드 클릭', { fileName, content });
+        try {
+            setInternalLoading(true);
+            onDownloadStart?.();
 
-        onDownloadComplete?.();
+            await generatePdf({
+                content,
+                fileName,
+                style
+            });
+
+            onDownloadComplete?.();
+        } catch (error) {
+            onError?.(error as Error);
+        } finally {
+            setInternalLoading(false);
+        }
     };
 
     return (
@@ -61,12 +86,12 @@ const PdfDownloadButton: React.FC<PdfDownloadButtonProps> = ({
             onClick={handleClick}
             disabled={disabled || isLoading}
             className={`
-        ${baseStyles}
-        ${variantStyles[variant]}
-        ${sizeStyles[size]}
-        ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
-        ${className}
-      `}
+                ${baseStyles}
+                ${variantStyles[variant]}
+                ${sizeStyles[size]}
+                ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+                ${className}
+            `}
         >
             {isLoading ? (
                 <svg
