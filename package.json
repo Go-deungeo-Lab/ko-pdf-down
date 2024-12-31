@@ -1,6 +1,6 @@
 {
   "name": "ko-pdf-down",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "PDF download library with Korean language support",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
